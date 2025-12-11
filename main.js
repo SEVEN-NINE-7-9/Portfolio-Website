@@ -46,6 +46,25 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ========================================
+    // DETECT DESKTOP SITE MODE ON PHONE
+    // ========================================
+    function detectDesktopMode() {
+        const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const screenWidth = window.innerWidth;
+        
+        // If mobile device but large viewport, likely desktop mode
+        if (isMobileDevice && screenWidth > 768) {
+            document.documentElement.style.fontSize = '14px';
+            document.body.style.transform = 'scale(0.85)';
+            document.body.style.transformOrigin = 'top left';
+            document.body.style.width = '117.6%';
+        }
+    }
+
+    detectDesktopMode();
+    window.addEventListener('resize', detectDesktopMode);
+
+    // ========================================
     // INITIALIZE THEME
     // ========================================
     const initTheme = () => {
@@ -206,7 +225,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const subject = document.getElementById('subject');
             const message = document.getElementById('message');
 
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValidEmail = emailRegex.test(email.value.trim());
+
             if (name.value.trim() && email.value.trim() && subject.value.trim() && message.value.trim()) {
+                if (!isValidEmail) {
+                    alert('⚠️ Please enter a valid email address.');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    return;
+                }
+
                 const formData = {
                     name: name.value.trim(),
                     email: email.value.trim(),
