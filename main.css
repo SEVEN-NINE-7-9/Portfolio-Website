@@ -279,14 +279,14 @@ body.dark-mode .hero {
 
 /* Projects Section */
 #projects {
-    background-color: var(--color-bg-dark);
-    color: var(--color-text-dark);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
     padding: 60px 20px;
 }
 
 body.dark-mode #projects {
-    background-color: var(--color-bg-light);
-    color: var(--color-text-light);
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
 }
 
 #projects h2 {
@@ -305,8 +305,8 @@ body.dark-mode #projects {
 }
 
 .project-card {
-    background-color: #1a1a1a;
-    border: 3px solid var(--color-text-dark);
+    background-color: #f0f0f0;
+    border: 3px solid var(--color-text-light);
     padding: 0;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -324,25 +324,25 @@ body.dark-mode #projects {
 .project-card:nth-child(6) { animation-delay: 0.5s; }
 
 body.dark-mode .project-card {
-    background-color: #f0f0f0;
-    border-color: var(--color-text-light);
+    background-color: #1a1a1a;
+    border-color: var(--color-text-dark);
 }
 
 .project-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 body.dark-mode .project-card:hover {
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.15);
 }
 
 .project-image {
     width: 100%;
     flex: 1;
     min-height: 0;
-    background-color: #2a2a2a;
-    border-bottom: 3px solid var(--color-text-dark);
+    background-color: #d0d0d0;
+    border-bottom: 3px solid var(--color-text-light);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -351,8 +351,8 @@ body.dark-mode .project-card:hover {
 }
 
 body.dark-mode .project-image {
-    background-color: #d0d0d0;
-    border-bottom-color: var(--color-text-light);
+    background-color: #2a2a2a;
+    border-bottom-color: var(--color-text-dark);
 }
 
 .project-image img {
@@ -363,36 +363,36 @@ body.dark-mode .project-image {
 
 .project-content {
     padding: 16px;
-    background-color: #1a1a1a;
+    background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 body.dark-mode .project-content {
-    background-color: #f0f0f0;
+    background-color: #1a1a1a;
 }
 
 .project-card h3 {
     font-size: 12px;
     margin: 0;
-    color: var(--color-text-dark);
+    color: var(--color-text-light);
 }
 
 body.dark-mode .project-card h3 {
-    color: var(--color-text-light);
+    color: var(--color-text-dark);
 }
 
 .project-card p {
     font-size: 10px;
     line-height: 1.4;
     margin: 0;
-    color: var(--color-text-dark);
+    color: var(--color-text-light);
     opacity: 0.85;
 }
 
 body.dark-mode .project-card p {
-    color: var(--color-text-light);
+    color: var(--color-text-dark);
 }
 
 /* ==========================================
