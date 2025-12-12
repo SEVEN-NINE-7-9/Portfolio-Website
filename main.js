@@ -1,43 +1,37 @@
 // Optimized Portfolio Script
 document.addEventListener('DOMContentLoaded', function() {
-    // Cache DOM elements
-    const body = document.body;
-    const navbar = document.querySelector('nav');
-    const themeText = document.getElementById('theme-text');
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    const sections = document.querySelectorAll('section[id]');
-    const contactForm = document.getElementById('contact-form');
-    const sceneContainers = document.querySelectorAll('.scene-container');
-    const gridItems = document.querySelectorAll('.grid-item');
-    const contactWrapper = document.querySelector('.contact-wrapper');
-    const hero = document.querySelector('.hero');
+    // ========================================
+    // CACHE DOM ELEMENTS
+    // ========================================
+    const DOM = {
+        body: document.body,
+        navbar: document.querySelector('nav'),
+        themeText: document.getElementById('theme-text'),
+        navLinks: document.querySelectorAll('nav a[href^="#"]'),
+        sections: document.querySelectorAll('section[id]'),
+        contactForm: document.getElementById('contact-form'),
+        sceneContainers: document.querySelectorAll('.scene-container'),
+        gridItems: document.querySelectorAll('.grid-item'),
+        contactWrapper: document.querySelector('.contact-wrapper'),
+        hero: document.querySelector('.hero'),
+        heroContent: document.querySelector('.hero .container'),
+        projectCards: document.querySelectorAll('.project-card'),
+        skillItems: document.querySelectorAll('.skill-item')
+    };
 
     // ========================================
     // GOOGLE SHEETS INTEGRATION
     // ========================================
-    // SETUP INSTRUCTIONS:
-    // 1. Go to https://script.google.com/
-    // 2. Create a new project
-    // 3. Paste the Apps Script code (provided separately)
-    // 4. Deploy as Web App
-    // 5. Copy the deployment URL and paste it below
-    
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQMnBqP2f_5ECl_M7a4SkU6YNbvmdZmo2dwjr_PWQupnZ5Hwl-mL4Klgk2ziIzORNixg/exec';
     
-    // Submit form data to Google Sheets
     const submitToGoogleSheets = async (formData) => {
         try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
+            await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-            
-            // Note: no-cors mode means we can't read the response
-            // But the submission will work
             return true;
         } catch (error) {
             console.error('Error submitting to Google Sheets:', error);
@@ -46,68 +40,67 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ========================================
-    // DETECT DESKTOP SITE MODE ON PHONE
+    // DETECT DESKTOP MODE ON MOBILE
     // ========================================
-    function detectDesktopMode() {
+    const detectDesktopMode = () => {
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const screenWidth = window.innerWidth;
         
-        // If mobile device but large viewport, likely desktop mode
         if (isMobileDevice && screenWidth > 768) {
             document.documentElement.style.fontSize = '14px';
-            document.body.style.transform = 'scale(0.85)';
-            document.body.style.transformOrigin = 'top left';
-            document.body.style.width = '117.6%';
+            DOM.body.style.transform = 'scale(0.85)';
+            DOM.body.style.transformOrigin = 'top left';
+            DOM.body.style.width = '117.6%';
         }
-    }
+    };
 
     detectDesktopMode();
     window.addEventListener('resize', detectDesktopMode);
 
     // ========================================
-    // INITIALIZE THEME
+    // THEME MANAGEMENT
     // ========================================
     const initTheme = () => {
         const savedTheme = localStorage.getItem('theme') || 'light';
         if (savedTheme === 'dark') {
-            body.classList.add('dark-mode');
-            if (themeText) themeText.textContent = 'Light Mode';
+            DOM.body.classList.add('dark-mode');
+            if (DOM.themeText) DOM.themeText.textContent = 'Light Mode';
         }
     };
 
     // ========================================
-    // PAGE LOAD FADE-IN
+    // PAGE LOAD FADE-IN (Enhanced)
     // ========================================
-    body.style.opacity = '0';
+    DOM.body.style.opacity = '0';
+    DOM.body.style.transform = 'translateY(20px)';
     requestAnimationFrame(() => {
-        body.style.transition = 'opacity 0.5s ease';
-        body.style.opacity = '1';
+        DOM.body.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        DOM.body.style.opacity = '1';
+        DOM.body.style.transform = 'translateY(0)';
     });
 
     // ========================================
-    // NAVBAR SCROLL EFFECT
+    // NAVBAR SCROLL EFFECT (Optimized)
     // ========================================
     let scrollTimeout;
-    window.addEventListener('scroll', () => {
+    const handleNavbarScroll = () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            DOM.navbar.classList.toggle('scrolled', window.scrollY > 50);
         }, 10);
-    }, { passive: true });
+    };
+
+    window.addEventListener('scroll', handleNavbarScroll, { passive: true });
 
     // ========================================
     // SMOOTH SCROLL NAVIGATION
     // ========================================
-    navLinks.forEach(link => {
+    DOM.navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const offset = navbar.offsetHeight;
+                const offset = DOM.navbar.offsetHeight;
                 const top = target.offsetTop - offset;
                 window.scrollTo({ top, behavior: 'smooth' });
             }
@@ -115,47 +108,60 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ========================================
-    // STAGGERED ANIMATIONS ON SCROLL
+    // ENHANCED SCROLL ANIMATIONS
     // ========================================
-    const animOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
+    const animOptions = { 
+        threshold: 0.15, 
+        rootMargin: '0px 0px -80px 0px' 
+    };
+    
     const animObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+        entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0) scale(1)';
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                }, index * 50); // Stagger effect
+                animObserver.unobserve(entry.target);
             }
         });
     }, animOptions);
 
-    // Apply animations
-    sceneContainers.forEach((container, i) => {
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0) scale(1)';
-    });
-
-    // Grid items - no animations
-    gridItems.forEach(item => {
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1) translateY(0)';
-    });
-
-    if (contactWrapper) {
-        contactWrapper.style.opacity = '0';
-        contactWrapper.style.transform = 'translateY(30px)';
-        contactWrapper.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        animObserver.observe(contactWrapper);
+    // Apply animations to contact wrapper
+    if (DOM.contactWrapper) {
+        DOM.contactWrapper.style.opacity = '0';
+        DOM.contactWrapper.style.transform = 'translateY(30px)';
+        DOM.contactWrapper.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        animObserver.observe(DOM.contactWrapper);
     }
 
     // ========================================
-    // PARALLAX EFFECT (Optimized)
+    // ENHANCED PARALLAX EFFECT
     // ========================================
     let parallaxTicking = false;
+    
     const updateParallax = () => {
-        // Hero parallax
-        if (hero && window.scrollY < window.innerHeight) {
+        if (DOM.hero && window.scrollY < window.innerHeight * 1.5) {
             const scrolled = window.scrollY;
-            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-            hero.style.opacity = Math.max(0, 1 - scrolled / 700);
+            const windowHeight = window.innerHeight;
+            
+            // Smooth parallax calculations
+            const parallaxSpeed = 0.4;
+            const translateY = scrolled * parallaxSpeed;
+            const opacity = Math.max(0, 1 - (scrolled / (windowHeight * 0.7)));
+            const scale = Math.max(0.92, 1 - (scrolled / (windowHeight * 5)));
+            const blur = Math.min(3, scrolled / 150);
+            
+            // Apply transforms
+            if (DOM.heroContent) {
+                DOM.heroContent.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                DOM.heroContent.style.opacity = opacity;
+            }
+            
+            DOM.hero.style.filter = `blur(${blur}px)`;
+        } else if (DOM.hero && DOM.heroContent) {
+            DOM.heroContent.style.transform = 'translateY(0) scale(1)';
+            DOM.hero.style.filter = 'blur(0px)';
         }
 
         parallaxTicking = false;
@@ -168,37 +174,146 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, { passive: true });
 
+    // Initialize parallax with GPU acceleration
+    if (DOM.heroContent) {
+        DOM.heroContent.style.transition = 'none';
+        DOM.heroContent.style.willChange = 'transform, opacity';
+    }
+    if (DOM.hero) {
+        DOM.hero.style.transition = 'none';
+        DOM.hero.style.willChange = 'filter';
+    }
+    
     updateParallax();
 
     // ========================================
-    // HOVER EFFECTS
+    // ENHANCED HOVER EFFECTS
     // ========================================
-    const interactiveElements = [
-        ...sceneContainers,
-        ...document.querySelectorAll('button:not(.theme-toggle)')
-    ];
-
-    interactiveElements.forEach(element => {
+    const addHoverEffect = (element, scaleAmount = 1.02, translateY = -5) => {
         element.addEventListener('mouseenter', () => {
-            element.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-            element.style.transform = 'translateY(-5px) scale(1.02)';
+            element.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            element.style.transform = `translateY(${translateY}px) scale(${scaleAmount})`;
         });
 
         element.addEventListener('mouseleave', () => {
             element.style.transform = 'translateY(0) scale(1)';
         });
+    };
+
+    // Apply to scene containers
+    DOM.sceneContainers.forEach(container => addHoverEffect(container));
+    
+    // Apply to buttons (excluding theme toggle)
+    document.querySelectorAll('button:not(.theme-toggle)').forEach(btn => 
+        addHoverEffect(btn, 1.05, -3)
+    );
+
+    // ========================================
+    // PROJECT CARDS SMOOTH ANIMATION
+    // ========================================
+    DOM.projectCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(40px) scale(0.95)';
+        card.style.transition = `opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s, 
+                                 transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+        
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(card);
+
+        // Enhanced hover with rotation
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-12px) scale(1.03)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
     });
 
     // ========================================
-    // PROJECT BUTTON REVEAL
+    // SKILL ITEMS WAVE ANIMATION
     // ========================================
-    sceneContainers.forEach(card => {
+    DOM.skillItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px) scale(0.9)';
+        item.style.transition = `opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s, 
+                                 transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s`;
+        
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        
+        observer.observe(item);
+
+        // Smooth hover with bounce
+        item.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.skill-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.2) rotate(5deg)';
+                icon.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            }
+        });
+
+        item.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.skill-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+
+    // ========================================
+    // GRID ITEMS STAGGER ANIMATION
+    // ========================================
+    DOM.gridItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'scale(0.9) translateY(20px)';
+        item.style.transition = `opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.08}s, 
+                                 transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.08}s`;
+        
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'scale(1) translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        
+        observer.observe(item);
+    });
+
+    // ========================================
+    // SCENE CONTAINER BUTTON REVEAL
+    // ========================================
+    DOM.sceneContainers.forEach(card => {
         const button = card.querySelector('button');
         if (button) {
+            button.style.opacity = '0';
+            button.style.transform = 'translateY(8px)';
+            button.style.transition = 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
             card.addEventListener('mouseenter', () => {
                 button.style.opacity = '1';
                 button.style.transform = 'translateY(0)';
             });
+            
             card.addEventListener('mouseleave', () => {
                 button.style.opacity = '0';
                 button.style.transform = 'translateY(8px)';
@@ -207,50 +322,80 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ========================================
+    // FORM INPUT ANIMATIONS
+    // ========================================
+    const formInputs = document.querySelectorAll('.form-group input, .form-group textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+
+        // Floating label effect
+        input.addEventListener('input', function() {
+            const label = this.previousElementSibling;
+            if (label && label.tagName === 'LABEL') {
+                if (this.value) {
+                    label.style.transform = 'translateY(-2px)';
+                    label.style.fontSize = '11px';
+                } else {
+                    label.style.transform = 'translateY(0)';
+                    label.style.fontSize = '12px';
+                }
+                label.style.transition = 'all 0.3s ease';
+            }
+        });
+    });
+
+    // ========================================
     // CONTACT FORM SUBMISSION
     // ========================================
-    if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
+    if (DOM.contactForm) {
+        DOM.contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const submitButton = DOM.contactForm.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             
-            // Disable button and show loading state
             submitButton.disabled = true;
             submitButton.innerHTML = 'Sending...';
+            submitButton.style.transform = 'scale(0.98)';
             
-            const name = document.getElementById('name');
-            const email = document.getElementById('email');
-            const subject = document.getElementById('subject');
-            const message = document.getElementById('message');
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                message: document.getElementById('message').value.trim(),
+                timestamp: new Date().toLocaleString()
+            };
 
-            // Email validation
+            // Validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const isValidEmail = emailRegex.test(email.value.trim());
+            const isValidEmail = emailRegex.test(formData.email);
 
-            if (name.value.trim() && email.value.trim() && subject.value.trim() && message.value.trim()) {
+            if (Object.values(formData).every(val => val)) {
                 if (!isValidEmail) {
                     alert('⚠️ Please enter a valid email address.');
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalButtonText;
+                    submitButton.style.transform = 'scale(1)';
                     return;
                 }
 
-                const formData = {
-                    name: name.value.trim(),
-                    email: email.value.trim(),
-                    subject: subject.value.trim(),
-                    message: message.value.trim(),
-                    timestamp: new Date().toLocaleString()
-                };
-
-                // Submit to Google Sheets
                 const success = await submitToGoogleSheets(formData);
 
                 if (success) {
                     alert('✅ Thank you for your message! I will get back to you soon.');
-                    contactForm.reset();
+                    DOM.contactForm.reset();
+                    
+                    // Smooth reset animation
+                    formInputs.forEach(input => {
+                        input.style.transform = 'scale(1)';
+                    });
                 } else {
                     alert('⚠️ There was an issue sending your message. Please try again or email me directly.');
                 }
@@ -258,17 +403,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Please fill in all fields.');
             }
 
-            // Re-enable button
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
+            submitButton.style.transform = 'scale(1)';
         });
     }
+
+    // ========================================
+    // SMOOTH SCROLL REVEAL FOR SECTIONS
+    // ========================================
+    const revealSections = () => {
+        DOM.sections.forEach(section => {
+            const sectionTop = section.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (sectionTop < windowHeight * 0.85) {
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            }
+        });
+    };
+
+    DOM.sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    });
+
+    window.addEventListener('scroll', revealSections, { passive: true });
+    revealSections();
+
+    // ========================================
+    // CURSOR TRAIL EFFECT (Optional Enhancement)
+    // ========================================
+    const createCursorTrail = () => {
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        const animateCursor = () => {
+            cursorX += (mouseX - cursorX) * 0.1;
+            cursorY += (mouseY - cursorY) * 0.1;
+            requestAnimationFrame(animateCursor);
+        };
+
+        animateCursor();
+    };
+
+    // Uncomment to enable cursor trail
+    // createCursorTrail();
 
     // ========================================
     // INITIALIZE
     // ========================================
     initTheme();
-    console.log('Portfolio initialized');
+    console.log('✨ Portfolio initialized with enhanced animations');
     console.log('💡 Contact form submissions will be saved to Google Sheets');
 });
 
@@ -276,10 +469,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // GLOBAL THEME TOGGLE
 // ========================================
 function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
+    const body = document.body;
     const themeText = document.getElementById('theme-text');
     
-    if (document.body.classList.contains('dark-mode')) {
+    body.classList.toggle('dark-mode');
+    
+    // Smooth theme transition
+    body.style.transition = 'background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    if (body.classList.contains('dark-mode')) {
         if (themeText) themeText.textContent = 'Light Mode';
         localStorage.setItem('theme', 'dark');
     } else {
